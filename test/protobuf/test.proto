@@ -1,0 +1,76 @@
+syntax = "proto3";    // 声明了protobuf的版本
+
+package fixbug;       // 声明了代码的包（对于C++来说是namespace）
+
+// 定义下面的选项，表示生成service服务类和rpc方法描述，默认不生成
+option cc_generic_services = true;
+
+// 每个响应请求都应该包含这个结构
+message ResultCode
+{
+    int32 errcode = 1;   // 错误码
+    bytes errmsg = 2;    // 错误信息
+}
+
+// 常用的数据类型：数据、列表(repeated)、映射表(map)
+/*
+ * 数据类型示例
+ */
+// 定义登录请求消息类型    name  pwd
+message LoginRequest
+{
+    // string name = 1;    // name是LoginRequest的第一个字段
+    // string pwd = 2;     // pwd是LoginRequest的第二个字段
+    
+    // 字符串类型尽量使用bytes，这样不涉及字符和字节的转换，效率有一定的提高
+    bytes name = 1;
+    bytes pwd = 2;
+}
+
+// 定义登录响应消息类型
+message LoginResponse
+{
+    ResultCode result = 1;
+    bool success = 2;    // 连接信息
+}
+
+
+/*
+ * 列表类型示例
+ */
+// 请求消息类型
+message GetFriendListsRequest
+{
+    uint32 userid = 1; // 用户的id
+}
+
+ // 用户消息类型
+message User
+{
+    bytes name = 1;
+    uint32 age = 2;
+
+    enum Sex
+    {
+        MAN = 0;
+        WOMAN = 1;
+    }
+    Sex sex = 3;
+}
+
+// 响应消息类型
+message GetFriendListsResponse
+{
+    ResultCode result = 1;
+    repeated User friend_list = 2; // 定义了一个列表类型
+}
+
+
+// 在protubuf里面定义描述rpc方法的类型 - service
+service UserServiceRpc
+{
+    // 对rpc方法的描述
+    // rpc 方法名(实参) returns (返回类型)
+    rpc Login (LoginRequest) returns (LoginResponse);
+    rpc GetFriendLists (GetFriendListsRequest) returns (GetFriendListsResponse);
+}

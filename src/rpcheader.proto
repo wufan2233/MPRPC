@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package mprpc;
+
+// rpc传递信息的数据头
+message RpcHeader
+{
+    bytes service_name = 1; // 服务对象名称
+    bytes method_name = 2;  // 方法名称
+    uint32 args_size = 3;   // 参数的长度，防止tcp数据粘包
+}
