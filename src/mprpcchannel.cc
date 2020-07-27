@@ -25,6 +25,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
     else
     {
         controller->SetFailed("serialize request error!");
+        LOG_ERR("(mprpcchannel.cc) serialize request error!");
         return;
     }
 
@@ -44,6 +45,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
     else
     {
         controller->SetFailed("serialize rpc header error!");
+        LOG_ERR("(mprpcchannel.cc) serialize rpc header error!");
         return;
     }
 
@@ -54,14 +56,14 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
     send_rpc_str += args_str;
 
     // 打印调试信息
-    std::cout << "*****************************************" << std::endl;
-    std::cout << "header_size: " << header_size << std::endl;
-    std::cout << "rpc_header_str: " << rpc_header_str << std::endl;
-    std::cout << "service_name: " << service_name << std::endl;
-    std::cout << "method_name: " << method_name << std::endl;
-    std::cout << "args_size: " << args_size << std::endl;
-    std::cout << "args_str: " << args_str << std::endl;
-    std::cout << "*****************************************" << std::endl;
+    // std::cout << "*****************************************" << std::endl;
+    // std::cout << "header_size: " << header_size << std::endl;
+    // std::cout << "rpc_header_str: " << rpc_header_str << std::endl;
+    // std::cout << "service_name: " << service_name << std::endl;
+    // std::cout << "method_name: " << method_name << std::endl;
+    // std::cout << "args_size: " << args_size << std::endl;
+    // std::cout << "args_str: " << args_str << std::endl;
+    // std::cout << "*****************************************" << std::endl;
 
     // 使用TCP编程，完成rpc方法的远程调用（客户端，不需要高并发）
     int clientfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -70,6 +72,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         char errtxt[512] = {0};
         sprintf(errtxt, "create socket error! errno:%d", errno);
         controller->SetFailed(errtxt);
+        LOG_ERR("(mprpcchannel.cc) create socket error! errno:%d", errno);
         return;
     }
 
@@ -87,6 +90,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
     if ("" == host_data)
     {
         controller->SetFailed(method_path + " is not exist!");
+        LOG_ERR("(mprpcchannel.cc) %s is not exist!", method_path.c_str());
         return;
     }
     // 解析结点内容
@@ -94,6 +98,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
     if (idx == -1)
     {
         controller->SetFailed(method_path + " address is invalid!");
+        LOG_ERR("(mprpcchannel.cc) %s address is invalid!", method_path.c_str());
         return;
     }
     // 获取解析后的内容
@@ -114,6 +119,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         char errtxt[512] = {0};
         sprintf(errtxt, "connect error! errno:%d", errno);
         controller->SetFailed(errtxt);
+        LOG_ERR("(mprpcchannel.cc) connect error! errno:%d", errno);
 
         return;
     }
@@ -126,6 +132,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         char errtxt[512] = {0};
         sprintf(errtxt, "send error! errno:%d", errno);
         controller->SetFailed(errtxt);
+        LOG_ERR("(mprpcchannel.cc) send error! errno:%d", errno);
 
         return;
     }
@@ -140,6 +147,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         char errtxt[512] = {0};
         sprintf(errtxt, "recv error! errno:%d", errno);
         controller->SetFailed(errtxt);
+        LOG_ERR("(mprpcchannel.cc) recv error! errno:%d", errno);
 
         return;
     }
@@ -152,6 +160,7 @@ void MprpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         char errtxt[512] = {0};
         sprintf(errtxt, "response parse error! recv_buf:%s", recv_buf);
         controller->SetFailed(errtxt);
+        LOG_ERR("(mprpcchannel.cc) response parse error! recv_buf:%s", recv_buf);
 
         return;
     }

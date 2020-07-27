@@ -47,7 +47,8 @@ void ZkClient::Start()
     m_zhandle = zookeeper_init(host.c_str(), global_watcher, 30000, nullptr, nullptr, 0);
     if (nullptr == m_zhandle)
     {
-        std::cout << "zookeeper_init error" << std::endl;
+        // std::cout << "zookeeper_init error" << std::endl;
+        LOG_ERR("(zookeeperutil.cc) zookeeper_init error");
         exit(EXIT_FAILURE);
     }
 
@@ -78,12 +79,14 @@ void ZkClient::Create(const char *path, const char *data, int datalen, int state
                           &ZOO_OPEN_ACL_UNSAFE, state, path_buffer, path_buffer_len);
         if (ZOK == flag) // 成功
         {
-            std::cout << "znode create success, path: " << path << std::endl;
+            // std::cout << "znode create success, path: " << path << std::endl;
+            LOG_INFO("znode create success, path: %s", path);
         }
         else
         {
-            std::cout << "flag: " << flag << std::endl;
-            std::cout << "znode create error, path: " << path << std::endl;
+            // std::cout << "flag: " << flag << std::endl;
+            // std::cout << "znode create error, path: " << path << std::endl;
+            LOG_ERR("(zookeeperutil.cc) znode create error, path: %s flag: %d", path, flag);
             exit(EXIT_FAILURE);
         }
     }
@@ -100,7 +103,8 @@ std::string ZkClient::GetData(const char *path)
     if (flag != ZOK)
     {
         // 获取失败
-        std::cout << "get znode error, path: " << path << std::endl;
+        // std::cout << "get znode error, path: " << path << std::endl;
+        LOG_ERR("get znode error, path: %s", path);
         return "";
     }
     else

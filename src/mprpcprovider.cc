@@ -90,6 +90,7 @@ void RpcProvider::Run()
 
     // rpc服务端启动，打印信息
     std::cout << "RpcProvider start server at ip " << ip << " port " << port << std::endl;
+    // LOG_INFO("RpcProvider start server at ip:%s, port:%d", ip.c_str(), port);
 
     // 启动网络服务
     server.start();
@@ -153,7 +154,8 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr &conn, // 连接
     else
     {
         //  数据头反序列化失败
-        std::cout << "rpc_header_str: " << rpc_header_str << " parse error" << std::endl;
+        // std::cout << "rpc_header_str: " << rpc_header_str << " parse error" << std::endl;
+        LOG_ERR("(mprpcprovider.cc) rpc_header_str: %s parse error", rpc_header_str.c_str());
         return;
     }
 
@@ -161,21 +163,22 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr &conn, // 连接
     std::string args_str = recv_buf.substr(4 + header_size, args_size);
 
     // 打印调试信息
-    std::cout << "=========================================" << std::endl;
-    std::cout << "header_size: " << header_size << std::endl;
-    std::cout << "rpc_header_str: " << rpc_header_str << std::endl;
-    std::cout << "service_name: " << service_name << std::endl;
-    std::cout << "method_name: " << method_name << std::endl;
-    std::cout << "args_size: " << args_size << std::endl;
-    std::cout << "args_str: " << args_str << std::endl;
-    std::cout << "=========================================" << std::endl;
+    // std::cout << "=========================================" << std::endl;
+    // std::cout << "header_size: " << header_size << std::endl;
+    // std::cout << "rpc_header_str: " << rpc_header_str << std::endl;
+    // std::cout << "service_name: " << service_name << std::endl;
+    // std::cout << "method_name: " << method_name << std::endl;
+    // std::cout << "args_size: " << args_size << std::endl;
+    // std::cout << "args_str: " << args_str << std::endl;
+    // std::cout << "=========================================" << std::endl;
 
     // 获取service对象和method对象
     auto sit = m_serviceMap.find(service_name);
     if (sit == m_serviceMap.end())
     {
         // 没有找到service对象
-        std::cout << service_name << " is not exits!" << std::endl;
+        // std::cout << service_name << " is not exits!" << std::endl;
+        LOG_ERR("(mprpcprovider.cc) %s is not exits!", service_name.c_str());
         return;
     }
 
@@ -184,7 +187,8 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr &conn, // 连接
     if (mit == sinfo.m_methodMap.end())
     {
         // 没有找到method对象
-        std::cout << service_name << ":" << method_name << " is not exits!" << std::endl;
+        // std::cout << service_name << ":" << method_name << " is not exits!" << std::endl;
+        LOG_ERR("(mprpcprovider.cc) %s:%s is not exits!", service_name.c_str(), method_name.c_str());
         return;
     }
 
@@ -199,7 +203,8 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr &conn, // 连接
     if (!requset->ParseFromString(args_str))
     {
         // 反序列化失败
-        std::cout << "requset parse error, content: " << args_str << std::endl;
+        // std::cout << "requset parse error, content: " << args_str << std::endl;
+        LOG_ERR("(mprpcprovider.cc) requset parse error, content: %s", args_str.c_str());
         return;
     }
 
@@ -230,7 +235,8 @@ void RpcProvider::SendRpcResponse(const muduo::net::TcpConnectionPtr &conn,
     }
     else
     {
-        std::cout << "response serialize error!" << std::endl;
+        // std::cout << "response serialize error!" << std::endl;
+        LOG_ERR("(mprpcprovider.cc) response serialize error!");
     }
 
     // 模拟http短链接服务，由服务提供方主动断开

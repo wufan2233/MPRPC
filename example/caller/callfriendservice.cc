@@ -24,7 +24,8 @@ int main(int argc, char **argv)
     if (controller.Failed())
     {
         // rpc调用失败
-        std::cout << controller.ErrorText() << std::endl;
+        // std::cout << controller.ErrorText() << std::endl;
+        LOG_ERR("(callfriendservice.cc) %s", controller.ErrorText().c_str());
     }
     else
     {
@@ -47,7 +48,8 @@ int main(int argc, char **argv)
         else
         {
             // 调用失败
-            std::cout << "rpc GetFriendsList response error: " << response.result().errmsg() << std::endl;
+            // std::cout << "rpc GetFriendsList response error: " << response.result().errmsg() << std::endl;
+            LOG_ERR("(callfriendservice.cc) rpc GetFriendsList response error: %s", response.result().errmsg().c_str());
         }
     }
 

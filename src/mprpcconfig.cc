@@ -1,4 +1,4 @@
-#include "mprpcconfig.h"
+#include "mprpcapplication.h"
 
 
 // 负责解析加载配置文件
@@ -7,7 +7,8 @@ void MprpcConfig::LoadConfigFile(const char *config_file)
     FILE *pf = fopen(config_file, "r");
     if (nullptr == pf) // 文件打开失败
     {
-        std::cout << config_file << " is not exist." << std::endl;
+        // std::cout << config_file << " ." << std::endl;
+        LOG_ERR("(mprpcconfig.cc) %s is not exist", config_file);
         exit(EXIT_FAILURE);
     }
 
